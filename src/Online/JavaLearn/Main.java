@@ -22,7 +22,7 @@ public class Main {
                 throw new MyException();
             } else {
                 ArrayList<String> id_list = Misc.getList(id_str,roman);
-                Misc.calc(id_list);
+                Misc.calc(id_list,roman);
             }
         }
         catch (MyException exc) {
@@ -71,19 +71,19 @@ class Misc {
         return num;
     }
 
-    public static void calc(ArrayList<String> arr) {
+    public static void calc(ArrayList<String> arr, boolean isRoman) {
         int num1 = Integer.parseInt(arr.get(0));
         int num2 = Integer.parseInt(arr.get(2));
         String op = arr.get(1);
         switch (op) {
             case ("+"):
-                System.out.println(num1 + num2);
+                System.out.println(Convert.convert(num1 + num2,isRoman));
                 break;
             case ("-"):
-                System.out.println(num1 - num2);
+                System.out.println(Convert.convert(num1 - num2,isRoman));
                 break;
             case ("*"):
-                System.out.println(num1 * num2);
+                System.out.println(Convert.convert(num1 * num2,isRoman));
                 break;
             case ("/"):
                 System.out.println((double) num1 / num2);
@@ -107,5 +107,57 @@ class Misc {
 class MyException extends Exception {
     public String toString() {
         return "Incorrect input";
+    }
+}
+
+
+class Convert{
+
+    static String convert(int i, boolean isRoman) {
+        String rom="";
+        if (!isRoman) rom = Integer.toString(i);
+        else{
+            int cel=0;
+            int ost=0;
+            if (i==100) rom="C";
+            else if (i>50){
+                rom="L";
+                cel=i/10-5;
+                ost=i%10;
+                if (cel<=3) rom += Append(cel,"X");
+                else rom="XC";
+                rom = Append_Edinicy(rom,ost);
+            }
+            else if (i==50) rom="L";
+            else if (i>10){
+                cel=i/10;
+                ost=i%10;
+                if (cel<=3) rom += Append(cel,"X");
+                else rom="XL";
+                rom = Append_Edinicy(rom,ost);
+            }
+            else if (i==10) rom="X";
+            else{
+                ost=i;
+                rom = Append_Edinicy(rom,ost);
+            }
+        }
+
+        return rom;
+    }
+
+    static String Append(int cel,String sym){
+        String rom="";
+        for (int i=1;i<=cel;i++) rom += sym;
+        return rom;
+    }
+
+    static String Append_Edinicy(String rom, int ost){
+        if (ost<=3) rom += Append(ost,"I");
+        else if (ost==4) rom += "IV";
+        else if (ost==5) rom += "V";
+        else if (ost<9) rom += "V" + Append(ost-5,"I");
+        else rom += "IX";
+        return rom;
     }
 }
